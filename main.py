@@ -18,7 +18,6 @@ class  ClubManage():
 		driver.find_element_by_xpath("//label[@id='loginbutton']/input").click()
 
 if __name__ == '__main__':
-	print("xxxx")
 	ClubManage('0972795235', 'xxxxxxxxxxx').login()
 		
 
