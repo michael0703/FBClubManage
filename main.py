@@ -19,7 +19,7 @@ class  ClubManage():
 
 if __name__ == '__main__':
 	print("xxxx")
-	ClubManage('0972795235', 'weiskewer0703').login()
+	ClubManage('0972795235', 'xxxxxxxxxxx').login()
 		
 
 
