@@ -26,9 +26,10 @@ class  ClubManage():
 		time.sleep(2)
 		print(len(posts), "======")
 		for post in posts:
-			target = post.find_elements_by_xpath("//span[@class='UFICommentActorAndBody']")
-			time.sleep(10)
+			target = post.find_elements_by_xpath(".//div[@class='UFIlist']")
+			time.sleep(2)
 			print(len(target), "======", sep='\n')
+
 
 
 if __name__ == '__main__':
