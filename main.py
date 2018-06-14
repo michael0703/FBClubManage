@@ -25,10 +25,15 @@ class  ClubManage():
 		#xpath = "//div[@class='_5pcr userContentWrapper']//span[@class='UFICommentActorAndBody']"
 		time.sleep(2)
 		print(len(posts), "======")
-		for post in posts:
+		for idx, post in enumerate(posts):
+			if idx == 0:
+				continue
+
 			target = post.find_elements_by_xpath(".//div[@class='UFIlist']")
 			time.sleep(2)
-			print(len(target), "======", sep='\n')
+			print(len(target))
+			if(len(target) >= 1):
+				print(target[0])
 
 
 
