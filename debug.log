@@ -5,3 +5,19 @@
 [0614/234249.011:ERROR:file_io_win.cc(179)] CreateFile C:\Users\michael\AppData\Local\Temp\scoped_dir17088_8432\Crashpad\settings.dat: 程序無法存取檔案，因為檔案正由另一個程序使用。 (0x20)
 [0614/234331.467:ERROR:process_reader_win.cc(123)] NtOpenThread: {拒絕存取} 程序已請求存取一物件，但未被授與存取權。 (0xc0000022)
 [0614/234331.468:ERROR:exception_snapshot_win.cc(88)] thread ID 12960 not found in process
+[0615/000809.190:ERROR:process_reader_win.cc(151)] SuspendThread: 存取被拒。 (0x5)
+[0615/000809.192:ERROR:process_reader_win.cc(151)] SuspendThread: 存取被拒。 (0x5)
+[0615/000809.192:ERROR:process_reader_win.cc(151)] SuspendThread: 存取被拒。 (0x5)
+[0615/000809.192:ERROR:process_reader_win.cc(151)] SuspendThread: 存取被拒。 (0x5)
+[0615/000809.192:ERROR:process_reader_win.cc(151)] SuspendThread: 存取被拒。 (0x5)
+[0615/000809.192:ERROR:process_reader_win.cc(151)] SuspendThread: 存取被拒。 (0x5)
+[0615/000809.192:ERROR:process_reader_win.cc(123)] NtOpenThread: {拒絕存取} 程序已請求存取一物件，但未被授與存取權。 (0xc0000022)
+[0615/000809.193:ERROR:exception_snapshot_win.cc(88)] thread ID 13780 not found in process
+[0615/104405.572:ERROR:process_reader_win.cc(123)] NtOpenThread: {拒絕存取} 程序已請求存取一物件，但未被授與存取權。 (0xc0000022)
+[0615/104405.574:ERROR:exception_snapshot_win.cc(88)] thread ID 12800 not found in process
+[0615/104547.061:ERROR:process_reader_win.cc(123)] NtOpenThread: {拒絕存取} 程序已請求存取一物件，但未被授與存取權。 (0xc0000022)
+[0615/104547.062:ERROR:exception_snapshot_win.cc(88)] thread ID 18276 not found in process
+[0615/120930.284:ERROR:process_reader_win.cc(123)] NtOpenThread: {拒絕存取} 程序已請求存取一物件，但未被授與存取權。 (0xc0000022)
+[0615/120930.294:ERROR:exception_snapshot_win.cc(88)] thread ID 4256 not found in process
+[0615/121121.676:ERROR:process_reader_win.cc(123)] NtOpenThread: {拒絕存取} 程序已請求存取一物件，但未被授與存取權。 (0xc0000022)
+[0615/121121.678:ERROR:exception_snapshot_win.cc(88)] thread ID 12500 not found in process
