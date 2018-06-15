@@ -1,7 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.action_chains import ActionChains
-from lxml import etree, html
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import sys
 import time
 
@@ -22,18 +23,21 @@ class  ClubManage():
 		self.driver.get(Url);
 	def SearchPost(self):
 		posts = self.driver.find_elements_by_xpath("//div[@class='_5pcr userContentWrapper']")
-		#xpath = "//div[@class='_5pcr userContentWrapper']//span[@class='UFICommentActorAndBody']"
 		time.sleep(2)
-		print(len(posts), "======")
 		for idx, post in enumerate(posts):
 			if idx == 0:
 				continue
+			comments_box = post.find_elements_by_xpath(".//div[@class='_3b-9 _j6a']")
+			if len(comments_box) == 0:
+				continue
+			roll_btn = comments_box[0].find_elements_by_xpath(".//a[@class='UFIPagerLink']")
+			if len(roll_btn) > 0:
+				ActionChains(self.driver).click(roll_btn[0]).perform()
+				print("success")
+			time.sleep(3)				# important !! need to wait for the comment expand
+			comment_list = comments_box[0].find_elements_by_xpath(".//div[@role='article']")
+			print(len(comment_list))
 
-			target = post.find_elements_by_xpath(".//div[@class='UFIlist']")
-			time.sleep(2)
-			print(len(target))
-			if(len(target) >= 1):
-				print(target[0])
 
 
 
