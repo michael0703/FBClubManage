@@ -36,7 +36,12 @@ class  ClubManage():
 				print("success")
 			time.sleep(3)				# important !! need to wait for the comment expand
 			comment_list = comments_box[0].find_elements_by_xpath(".//div[@role='article']")
-			print(len(comment_list))
+			#print(len(comment_list))
+			for comment in comment_list:
+				Comment_ActorandBody = comment.find_element_by_xpath(".//div[@class='UFIImageBlockContent _42ef']")
+				Comment_Actor = Comment_ActorandBody.find_element_by_xpath(".//div[@class='UFICommentContent']").text.split()[0]
+				print(Comment_Actor)
+
 
 
 
