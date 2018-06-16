@@ -7,7 +7,7 @@ import sys
 import time
 
 FB_Url = 'https://facebook.com'
-Club_Url = 'https://www.facebook.com/groups/huberstudents/'
+Club_Url = 'https://www.facebook.com/groups/1603769146534321/?sorting_setting=CHRONOLOGICAL'
 
 class  ClubManage():
 	def __init__(self, account, passwd):
@@ -27,20 +27,29 @@ class  ClubManage():
 		for idx, post in enumerate(posts):
 			if idx == 0:
 				continue
+			post_time = post.find_element_by_xpath(".//abbr[contains(@class,'_5ptz')]").get_attribute("title")
+			post_content = post.find_element_by_xpath(".//div[@class='_5pbx userContent _3576']").text
+			print(post_content, post_time)
 			comments_box = post.find_elements_by_xpath(".//div[@class='_3b-9 _j6a']")
 			if len(comments_box) == 0:
 				continue
 			roll_btn = comments_box[0].find_elements_by_xpath(".//a[@class='UFIPagerLink']")
 			if len(roll_btn) > 0:
 				ActionChains(self.driver).click(roll_btn[0]).perform()
-				print("success")
+				#print("success")
 			time.sleep(3)				# important !! need to wait for the comment expand
 			comment_list = comments_box[0].find_elements_by_xpath(".//div[@role='article']")
 			#print(len(comment_list))
 			for comment in comment_list:
 				Comment_ActorandBody = comment.find_element_by_xpath(".//div[@class='UFIImageBlockContent _42ef']")
 				Comment_Actor = Comment_ActorandBody.find_element_by_xpath(".//div[@class='UFICommentContent']").text.split()[0]
-				print(Comment_Actor)
+				
+				# use for debug. under shows the time of the "Comment" not the "Post"
+				#Time_block = Comment_ActorandBody.find_element_by_xpath(".//div[@class='fsm fwn fcg UFICommentActions']")
+				#Time_diff = Time_block.find_element_by_xpath(".//abbr[@class='UFISutroCommentTimestamp livetimestamp']").text
+
+				#print(Comment_Actor, Time_diff)
+			print("======")
 
 
 
