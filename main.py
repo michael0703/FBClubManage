@@ -9,6 +9,8 @@ import time
 FB_Url = 'https://facebook.com'
 Club_Url = 'https://www.facebook.com/groups/1603769146534321/?sorting_setting=CHRONOLOGICAL'
 
+CurMonth = 6
+
 class  ClubManage():
 	def __init__(self, account, passwd):
 
@@ -31,7 +33,20 @@ class  ClubManage():
 	def LocateToTheLatest(self):
 
 		flag = True
+		count = 15
+
 		while flag:
+
+			for i in range(count):
+				self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight)") 
+				print("Start to Roll the Page!")
+				time.sleep(4)
+
+			count -= 3
+
+			if count <= 3:
+				count=3
+
 			posts = self.driver.find_elements_by_xpath("//div[@class='_5pcr userContentWrapper']")
 			print(len(posts))
 			time.sleep(1)
@@ -43,17 +58,14 @@ class  ClubManage():
 					print("End of search!", post_time.split()[0].split('-')[1])
 					flag = False
 					break
-			if flag:
-				#roll down the page
-				self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight)") 
-				print("Start to Roll the Page!")
-				time.sleep(10)
+		self.driver.execute_script("window.scrollTo(0, 0)")
+			
 
 	def SearchPost(self):
 		
 		# Use this func to first load all the CurMonth Post
 		# Uncomment it when u need the whole result. OTHERWISE, COMMENT IT WHILE TESTING!
-		#self.LocateToTheLatest()
+		self.LocateToTheLatest()
 
 		# Locate all the post in CurMonth
 		posts = self.driver.find_elements_by_xpath("//div[@class='_5pcr userContentWrapper']")
@@ -65,27 +77,58 @@ class  ClubManage():
 			if idx == 0:
 				continue
 			
+			print("======")
+			print("Poster:")
 			# All the Post Information : timestamp, user, userlink, post-content
 			post_time = post.find_element_by_xpath(".//abbr[contains(@class,'_5ptz')]").get_attribute("title")
 			post_user = post.find_element_by_xpath(".//h5[contains(@class,'_14f3')]")
+			post_username =  post.find_element_by_xpath(".//h5[contains(@class,'_14f3')]").find_element_by_xpath(".//a").text
 			post_userid = post.find_element_by_xpath(".//h5[contains(@class,'_14f3')]").find_element_by_xpath(".//a").get_attribute("href")
 			#post_content = post.find_element_by_xpath(".//div[contains(@class, 'userContent')]").text
-			print(post_userid, post_time)
+			print(post_username, post_userid, post_time)
 
 			# Locate the Comments
 			comments_box = post.find_elements_by_xpath(".//div[@class='_3b-9 _j6a']")
 			if len(comments_box) == 0:
 				continue
-			comment_list = comments_box[0].find_elements_by_xpath(".//div[@role='article']")
 			
 			# Expand all the comments below
-			roll_btn = comments_box[0].find_elements_by_xpath(".//a[@class='UFIPagerLink']")
-			if len(roll_btn) > 0:
-				ActionChains(self.driver).click(roll_btn[0]).perform()
+			try:
+				has_roll_btn = True
+				while has_roll_btn:
+					roll_btn = comments_box[0].find_elements_by_xpath(".//a[@class='UFIPagerLink']")
+					if len(roll_btn) > 0:
+						ActionChains(self.driver).click(roll_btn[0]).perform()
+						time.sleep(3)
+					else:
+						has_roll_btn = False
+			except:
+				pass
+				# print("click")
 				#print("success")
-			time.sleep(3)				# important !! need to wait for the comment expand
-			
-			print("======")
+							# important !! need to wait for the comment expand
+
+			comment_expand = comments_box[0].find_elements_by_xpath(".//div[@class='UFIImageBlockContent _42ef _8u']")
+			for comment_expand_btn in comment_expand:
+				has_expand_btn = True
+				while has_expand_btn:
+					try:
+						expand_btn = comment_expand_btn.find_elements_by_xpath(".//a[@class='UFIPagerLink']")
+						expand_btn1 = comment_expand_btn.find_elements_by_xpath(".//span[contains(@class,'UFIReplySocialSentenceLinkText')]")
+						if len(expand_btn) > 0:
+							ActionChains(self.driver).click(expand_btn[0]).perform()
+							time.sleep(3)
+						elif len(expand_btn1) > 0:
+							ActionChains(self.driver).click(expand_btn1[0]).perform()
+							time.sleep(3)
+						else:
+							has_expand_btn = False
+					except:
+						has_expand_btn = False
+
+			comment_list = comments_box[0].find_elements_by_xpath(".//div[@role='article']")
+
+			print("Commentors:")
 
 			# Traverse all the comments
 			for comment in comment_list:
