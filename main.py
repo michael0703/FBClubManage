@@ -8,6 +8,7 @@ import time
 
 FB_Url = 'https://facebook.com'
 Club_Url = 'https://www.facebook.com/groups/1603769146534321/?sorting_setting=CHRONOLOGICAL'
+Chrome_Setting = "chrome://settings/content"
 
 CurMonth = 6
 
@@ -16,10 +17,14 @@ class  ClubManage():
 
 		self.account = account
 		self.passwd = passwd
-		self.driver = webdriver.Chrome()
-		
+
+		chrome_options = webdriver.ChromeOptions()
+		prefs = {"profile.default_content_setting_values.notifications" : 2}
+		chrome_options.add_experimental_option("prefs",prefs)
+		self.driver = webdriver.Chrome(chrome_options=chrome_options)
 		self.driver.set_window_size(1920,1080)
-	def login(self):
+
+	def Login(self):
 
 		self.driver.get(FB_Url)
 		self.driver.find_element_by_name("email").send_keys(self.account)
@@ -54,7 +59,7 @@ class  ClubManage():
 				if idx == 0:
 					continue
 				post_time = post.find_element_by_xpath(".//abbr[contains(@class,'_5ptz')]").get_attribute("title")
-				if int(post_time.split()[0].split('-')[1]) != CurMonth:
+				if int(post_time.split()[0].split('-')[1]) < CurMonth:
 					print("End of search!", post_time.split()[0].split('-')[1])
 					flag = False
 					break
@@ -155,7 +160,7 @@ if __name__ == '__main__':
 		sys.exit()
 	account, passwd = sys.argv[1], sys.argv[2]
 	Manager = ClubManage(account, passwd)
-	Manager.login()
+	Manager.Login()
 	Manager.EnterClub(Club_Url)
 	Manager.SearchPost()
 	
