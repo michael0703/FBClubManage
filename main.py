@@ -18,7 +18,7 @@ class  ClubManage():
 		self.passwd = passwd
 		self.driver = webdriver.Chrome()
 		
-		#self.driver.set_window_size(1920,1080)
+		self.driver.set_window_size(1920,1080)
 	def login(self):
 
 		self.driver.get(FB_Url)
@@ -117,15 +117,18 @@ class  ClubManage():
 						expand_btn1 = comment_expand_btn.find_elements_by_xpath(".//span[contains(@class,'UFIReplySocialSentenceLinkText')]")
 						if len(expand_btn) > 0:
 							ActionChains(self.driver).click(expand_btn[0]).perform()
+							print("press first kind button!")
 							time.sleep(3)
 						elif len(expand_btn1) > 0:
 							ActionChains(self.driver).click(expand_btn1[0]).perform()
+							print("press second kind button!")
 							time.sleep(3)
 						else:
 							has_expand_btn = False
 					except:
 						has_expand_btn = False
 
+			time.sleep(1)
 			comment_list = comments_box[0].find_elements_by_xpath(".//div[@role='article']")
 
 			print("Commentors:")
