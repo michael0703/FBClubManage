@@ -1,3 +1,4 @@
+# coding:utf-8
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.action_chains import ActionChains
@@ -6,10 +7,11 @@ from selenium.webdriver.support import expected_conditions as EC
 import sys
 import time
 import csv
+import codecs
+
 
 FB_Url = 'https://facebook.com'
 Club_Url = 'https://www.facebook.com/groups/1603769146534321/?sorting_setting=CHRONOLOGICAL'
-Chrome_Setting = "chrome://settings/content"
 
 CurMonth = 6
 
@@ -29,7 +31,16 @@ class  ClubManage():
 		# Create output files first
 		self.postfd = open("Post.csv", "w")
 		self.commentfd = open("Comment.csv", "w")
+		self.likelistfd = open("Likelist.csv", "w")
 
+		self.postwriter = csv.writer(self.postfd)
+		self.commentwriter = csv.writer(self.commentfd)
+		self.likelistwriter = csv.writer(self.likelistfd)
+
+		# Add the Field
+		self.postwriter.writerow(['UserName', 'UserId', 'PostTime'])
+		self.commentwriter.writerow(['UserName', 'UserId', 'CommentTime'])
+		self.likelistwriter.writerow(['UserName', 'UserId', 'LikeTime'])
 
 	def Login(self):
 
@@ -78,15 +89,18 @@ class  ClubManage():
 		# Parse the Id from href
 		href = data[1].split('?')[1]
 		if href[0] == 'i' and href[1] == 'd':
-			data[1] = href.split('&')[0].split('=')[1]
+			data[1] = str(href.split('&')[0].split('=')[1])
 		else:
-			data[1] = data[1].split('?')[0].split('/')[-1]
+			data[1] = str(data[1].split('?')[0].split('/')[-1])
 
-	def WriteToFile(self, fd, data):
+	def WriteToFile(self, fd, data, Type):
 
 		self.ParseId(data)
-		encdata = [item.encode('utf8').decode("cp950", "ignore") for item in data]
-		csv.writer(fd, delimiter=' ').writerows(encdata)
+		encdata = [item.encode("cp950", "ignore").decode("cp950", "ignore") for item in data]
+		if Type == 'Post':
+			self.postwriter.writerow(encdata)
+		elif Type == 'Comment':
+			self.commentwriter.writerow(encdata)
 	
 	def SearchPost(self):
 		
@@ -111,10 +125,11 @@ class  ClubManage():
 			post_user = post.find_element_by_xpath(".//h5[contains(@class,'_14f3')]")
 			post_username =  post.find_element_by_xpath(".//h5[contains(@class,'_14f3')]").find_element_by_xpath(".//a").text
 			post_userid = post.find_element_by_xpath(".//h5[contains(@class,'_14f3')]").find_element_by_xpath(".//a").get_attribute("href")
+			post_like = post.find_element_by_xpath(".//div[contains(@class,'UFIRow') and contains(@class,'UFILikeSentence')]").text.split("\n")[0]
 			#post_content = post.find_element_by_xpath(".//div[contains(@class, 'userContent')]").text
-			print(post_username, post_userid, post_time)
+			print(post_username, post_time, post_like)
 
-			self.WriteToFile(self.postfd, [post_username, post_userid, post_time])
+			self.WriteToFile(self.postfd, [post_username, post_userid, post_time, post_like], 'Post')
 
 			# Locate the Comments
 			comments_box = post.find_elements_by_xpath(".//div[@class='_3b-9 _j6a']")
@@ -166,12 +181,12 @@ class  ClubManage():
 
 				# All the Comment Information : user, userlink, comment-content, timestamp
 				Comment_ActorandBody = comment.find_element_by_xpath(".//div[@class='UFIImageBlockContent _42ef']")
-				Comment_Actor = Comment_ActorandBody.find_element_by_xpath(".//div[@class='UFICommentContent']").text.split()[0]
+				Comment_Actor = Comment_ActorandBody.find_element_by_xpath(".//div[@class='UFICommentContent']").find_element_by_xpath(".//a").text.split('\n')[0]
 				Comment_ActorId = Comment_ActorandBody.find_element_by_xpath(".//a").get_attribute('href')
 				Time_block = Comment_ActorandBody.find_element_by_xpath(".//div[@class='fsm fwn fcg UFICommentActions']")
 				Comment_time = Time_block.find_element_by_xpath(".//abbr[@class='UFISutroCommentTimestamp livetimestamp']").get_attribute('title')
 
-				self.WriteToFile(self.commentfd, [Comment_Actor, Comment_ActorId, Comment_time])
+				self.WriteToFile(self.commentfd, [Comment_Actor, Comment_ActorId, Comment_time], 'Comment')
 				print(Comment_Actor, Comment_ActorId)
 			
 			print("======")
