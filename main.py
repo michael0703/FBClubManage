@@ -83,6 +83,9 @@ class  ClubManage():
 				if idx == 0:
 					continue
 				post_time = post.find_element_by_xpath(".//abbr[contains(@class,'_5ptz')]").get_attribute("title")
+				
+				# It will GO WRONG when cross a year!!!!!!!!!!! Need to modify
+
 				if int(post_time.split()[0].split('-')[1]) < CurMonth:
 					print("End of search!", post_time.split()[0].split('-')[1])
 					flag = False
@@ -281,7 +284,7 @@ class  ClubManage():
 			member_list = member_block.find_elements_by_xpath(".//div[@class='clearfix _60rh _gse']")
 			NowProcess = len(member_list)
 			print(LastProcess, NowProcess)
-			
+
 			for midx in range(NowProcess-LastProcess):
 				member_info_block = member_list[LastProcess+midx].find_element_by_xpath(".//div[@class='clearfix _8u _42ef']")
 				member_name_info = member_info_block.find_element_by_xpath(".//div[@class='_60ri fsl fwb fcb']")
