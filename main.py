@@ -40,7 +40,7 @@ class  ClubManage():
 		# Add the Field
 		self.postwriter.writerow(['UserName', 'UserId', 'PostTime'])
 		self.commentwriter.writerow(['UserName', 'UserId', 'CommentTime'])
-		self.likelistwriter.writerow(['UserName', 'UserId', 'LikeTime'])
+		self.likelistwriter.writerow(['UserName', 'UserId'])
 
 	def Login(self):
 
@@ -101,6 +101,8 @@ class  ClubManage():
 			self.postwriter.writerow(encdata)
 		elif Type == 'Comment':
 			self.commentwriter.writerow(encdata)
+		elif Type == 'Like':
+			self.likelistwriter.writerow(encdata)
 	
 	def SearchPost(self):
 		
@@ -165,6 +167,8 @@ class  ClubManage():
 				like_user = like.find_element_by_xpath(".//a").text
 				like_id = like.find_element_by_xpath(".//a").get_attribute('href')
 				print(like_user, like_id)
+
+				self.WriteToFile(self.likelistfd, [like_user, like_id], 'Like')
 
 
 			# End of Like search Need to click to close the list
