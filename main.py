@@ -5,6 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import sys
 import time
+import csv
 
 FB_Url = 'https://facebook.com'
 Club_Url = 'https://www.facebook.com/groups/1603769146534321/?sorting_setting=CHRONOLOGICAL'
@@ -18,14 +19,21 @@ class  ClubManage():
 		self.account = account
 		self.passwd = passwd
 
+		# Some default Chrome options
 		chrome_options = webdriver.ChromeOptions()
 		prefs = {"profile.default_content_setting_values.notifications" : 2}
 		chrome_options.add_experimental_option("prefs",prefs)
 		self.driver = webdriver.Chrome(chrome_options=chrome_options)
 		self.driver.set_window_size(1920,1080)
 
+		# Create output files first
+		self.postfd = open("Post.csv", "w")
+		self.commentfd = open("Comment.csv", "w")
+
+
 	def Login(self):
 
+		# Login to FB
 		self.driver.get(FB_Url)
 		self.driver.find_element_by_name("email").send_keys(self.account)
 		self.driver.find_element_by_name("pass").send_keys(self.passwd)
@@ -65,12 +73,26 @@ class  ClubManage():
 					break
 		self.driver.execute_script("window.scrollTo(0, 0)")
 			
+	def ParseId(self, data):
 
+		# Parse the Id from href
+		href = data[1].split('?')[1]
+		if href[0] == 'i' and href[1] == 'd':
+			data[1] = href.split('&')[0].split('=')[1]
+		else:
+			data[1] = data[1].split('?')[0].split('/')[-1]
+
+	def WriteToFile(self, fd, data):
+
+		self.ParseId(data)
+		encdata = [item.encode('utf8').decode("cp950", "ignore") for item in data]
+		csv.writer(fd, delimiter=' ').writerows(encdata)
+	
 	def SearchPost(self):
 		
 		# Use this func to first load all the CurMonth Post
 		# Uncomment it when u need the whole result. OTHERWISE, COMMENT IT WHILE TESTING!
-		self.LocateToTheLatest()
+		#self.LocateToTheLatest()
 
 		# Locate all the post in CurMonth
 		posts = self.driver.find_elements_by_xpath("//div[@class='_5pcr userContentWrapper']")
@@ -92,6 +114,8 @@ class  ClubManage():
 			#post_content = post.find_element_by_xpath(".//div[contains(@class, 'userContent')]").text
 			print(post_username, post_userid, post_time)
 
+			self.WriteToFile(self.postfd, [post_username, post_userid, post_time])
+
 			# Locate the Comments
 			comments_box = post.find_elements_by_xpath(".//div[@class='_3b-9 _j6a']")
 			if len(comments_box) == 0:
@@ -109,9 +133,6 @@ class  ClubManage():
 						has_roll_btn = False
 			except:
 				pass
-				# print("click")
-				#print("success")
-							# important !! need to wait for the comment expand
 
 			comment_expand = comments_box[0].find_elements_by_xpath(".//div[@class='UFIImageBlockContent _42ef _8u']")
 			for comment_expand_btn in comment_expand:
@@ -133,6 +154,8 @@ class  ClubManage():
 					except:
 						has_expand_btn = False
 
+
+			# Retrieve all the comments
 			time.sleep(1)
 			comment_list = comments_box[0].find_elements_by_xpath(".//div[@role='article']")
 
@@ -145,14 +168,14 @@ class  ClubManage():
 				Comment_ActorandBody = comment.find_element_by_xpath(".//div[@class='UFIImageBlockContent _42ef']")
 				Comment_Actor = Comment_ActorandBody.find_element_by_xpath(".//div[@class='UFICommentContent']").text.split()[0]
 				Comment_ActorId = Comment_ActorandBody.find_element_by_xpath(".//a").get_attribute('href')
-				
-				# Use for debug. under shows the time of the "Comment" not the "Post"
-				#Time_block = Comment_ActorandBody.find_element_by_xpath(".//div[@class='fsm fwn fcg UFICommentActions']")
-				#Time_diff = Time_block.find_element_by_xpath(".//abbr[@class='UFISutroCommentTimestamp livetimestamp']").text
+				Time_block = Comment_ActorandBody.find_element_by_xpath(".//div[@class='fsm fwn fcg UFICommentActions']")
+				Comment_time = Time_block.find_element_by_xpath(".//abbr[@class='UFISutroCommentTimestamp livetimestamp']").get_attribute('title')
 
+				self.WriteToFile(self.commentfd, [Comment_Actor, Comment_ActorId, Comment_time])
 				print(Comment_Actor, Comment_ActorId)
 			
 			print("======")
+
 
 if __name__ == '__main__':
 	if len(sys.argv) <= 2:
@@ -163,6 +186,7 @@ if __name__ == '__main__':
 	Manager.Login()
 	Manager.EnterClub(Club_Url)
 	Manager.SearchPost()
+
 	
 
 
