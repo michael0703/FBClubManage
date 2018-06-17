@@ -45,7 +45,7 @@ class  ClubManage():
 		self.postwriter.writerow(['UserName', 'UserId', 'PostTime'])
 		self.commentwriter.writerow(['UserName', 'UserId', 'CommentTime'])
 		self.likelistwriter.writerow(['UserName', 'UserId'])
-		self.clubmemberwriter.writerow(['UserName', 'UserId'])
+		self.clubmemberwriter.writerow(['UserName', 'UserId', 'JoinDate'])
 
 	def Login(self):
 
@@ -108,6 +108,8 @@ class  ClubManage():
 			self.commentwriter.writerow(encdata)
 		elif Type == 'Like':
 			self.likelistwriter.writerow(encdata)
+		elif Type == 'ClubMem':
+			self.clubmemberwriter.writerow(encdata)
 	
 	def SearchPost(self):
 		
@@ -285,9 +287,10 @@ class  ClubManage():
 				member_id = member_name_info.find_element_by_xpath(".//a").get_attribute('href')
 				try:
 					member_time = member_info_block.find_element_by_xpath(".//div[@class='_60rj']/abbr").get_attribute('title')
+					member_time = member_time.split()[0].split('年')[0] +'-'+ member_time.split()[0].split('年')[1].split('月')[0] +'-'+ member_time.split()[0].split('月')[1].split('日')[0]
 				except:
 					member_time = str(date.today())
-
+				self.WriteToFile(self.clubmemberfd, [member_name, member_id, member_time], 'ClubMem')
 				print(member_name, member_time)
 				
 			LastProcess = len(member_list)
