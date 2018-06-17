@@ -115,9 +115,9 @@ class  ClubManage():
 		
 		# Traverse all the posts
 		for idx, post in enumerate(posts):
+
 			if idx == 0:
 				continue
-			
 			print("======")
 			print("Poster:")
 			# All the Post Information : timestamp, user, userlink, post-content
@@ -125,17 +125,59 @@ class  ClubManage():
 			post_user = post.find_element_by_xpath(".//h5[contains(@class,'_14f3')]")
 			post_username =  post.find_element_by_xpath(".//h5[contains(@class,'_14f3')]").find_element_by_xpath(".//a").text
 			post_userid = post.find_element_by_xpath(".//h5[contains(@class,'_14f3')]").find_element_by_xpath(".//a").get_attribute("href")
-			post_like = post.find_element_by_xpath(".//div[contains(@class,'UFIRow') and contains(@class,'UFILikeSentence')]").text.split("\n")[0]
 			#post_content = post.find_element_by_xpath(".//div[contains(@class, 'userContent')]").text
-			print(post_username, post_time, post_like)
+			print(post_username, post_time)
 
-			self.WriteToFile(self.postfd, [post_username, post_userid, post_time, post_like], 'Post')
+			self.WriteToFile(self.postfd, [post_username, post_userid, post_time], 'Post')
+
+			#########################################
+			# Locate the Like and Push the btn
+			try:			
+				like_box = post.find_element_by_xpath(".//div[contains(@class,'UFIRow') and contains(@class,'UFILikeSentence')]")
+				like_btn = like_box.find_elements_by_xpath(".//a[@class='_2x4v']")
+				ActionChains(self.driver).click(like_btn[0]).perform()
+				#print("click the like expand button", like_btn[0])
+				while len(self.driver.find_elements_by_xpath(".//li[@class='_5i_q']")) == 0:
+					time.sleep(1)
+			except:
+				print("open like except")
+				pass
+			
+			like_list_block = self.driver.find_element_by_xpath(".//div[@class='uiScrollableAreaContent']")
+
+			has_like_btn = True
+			while has_like_btn:
+				try:
+					like_more_btn = self.driver.find_elements_by_xpath(".//a[contains(@class,'uiMorePagerPrimary')]")
+					if len(like_more_btn) > 0:
+						print("click the more like btn")
+						ActionChains(self.driver).click(like_more_btn[0]).perform()
+						time.sleep(3)
+					else:
+						has_like_btn = False
+				except:
+					has_like_btn = False
+
+			like_list = self.driver.find_elements_by_xpath(".//li[@class='_5i_q']")
+			print("Like Num:", len(like_list))
+
+
+			# End of Like search Need to click to close the list
+			try:
+				close_btn = self.driver.find_elements_by_xpath(".//a[contains(text(), '關閉')]")
+				ActionChains(self.driver).click(close_btn[0]).perform()
+				print("close the like")
+			except:
+				print("close like except")
+				pass
+
 
 			# Locate the Comments
 			comments_box = post.find_elements_by_xpath(".//div[@class='_3b-9 _j6a']")
 			if len(comments_box) == 0:
 				continue
 			
+			#########################################
 			# Expand all the comments below
 			try:
 				has_roll_btn = True
