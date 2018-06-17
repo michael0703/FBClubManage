@@ -158,6 +158,7 @@ class  ClubManage():
 				except:
 					has_like_btn = False
 
+			time.sleep(1)
 			like_list = self.driver.find_elements_by_xpath(".//li[@class='_5i_q']")
 			print("Like Num:", len(like_list))
 
