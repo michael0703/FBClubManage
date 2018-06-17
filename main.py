@@ -9,7 +9,7 @@ import sys
 import time
 import csv
 import codecs
-
+from datetime import date
 
 FB_Url = 'https://facebook.com'
 Club_Url = 'https://www.facebook.com/groups/1603769146534321/?sorting_setting=CHRONOLOGICAL'
@@ -34,15 +34,18 @@ class  ClubManage():
 		self.postfd = open("Post.csv", "w")
 		self.commentfd = open("Comment.csv", "w")
 		self.likelistfd = open("Likelist.csv", "w")
+		self.clubmemberfd = open('ClubMember.csv', 'w')
 
 		self.postwriter = csv.writer(self.postfd)
 		self.commentwriter = csv.writer(self.commentfd)
 		self.likelistwriter = csv.writer(self.likelistfd)
+		self.clubmemberwriter = csv.writer(self.clubmemberfd)
 
 		# Add the Field
 		self.postwriter.writerow(['UserName', 'UserId', 'PostTime'])
 		self.commentwriter.writerow(['UserName', 'UserId', 'CommentTime'])
 		self.likelistwriter.writerow(['UserName', 'UserId'])
+		self.clubmemberwriter.writerow(['UserName', 'UserId'])
 
 	def Login(self):
 
@@ -274,12 +277,19 @@ class  ClubManage():
 			member_block = self.driver.find_element_by_xpath(".//div[@id='groupsMemberSection_all_members']")
 			member_list = member_block.find_elements_by_xpath(".//div[@class='clearfix _60rh _gse']")
 			NowProcess = len(member_list)
+			print(LastProcess, NowProcess)
 			for midx in range(NowProcess-LastProcess):
 				member_info_block = member_list[LastProcess+midx].find_element_by_xpath(".//div[@class='clearfix _8u _42ef']")
 				member_name_info = member_info_block.find_element_by_xpath(".//div[@class='_60ri fsl fwb fcb']")
 				member_name = member_name_info.text
 				member_id = member_name_info.find_element_by_xpath(".//a").get_attribute('href')
-				print(member_name, member_id)
+				try:
+					member_time = member_info_block.find_element_by_xpath(".//div[@class='_60rj']/abbr").get_attribute('title')
+				except:
+					member_time = str(date.today())
+
+				print(member_name, member_time)
+				
 			LastProcess = len(member_list)
 
 			self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight)")
