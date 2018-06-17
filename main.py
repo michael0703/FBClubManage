@@ -276,10 +276,12 @@ class  ClubManage():
 		# One time Process a page and then Scorll 
 
 		while True:
+
 			member_block = self.driver.find_element_by_xpath(".//div[@id='groupsMemberSection_all_members']")
 			member_list = member_block.find_elements_by_xpath(".//div[@class='clearfix _60rh _gse']")
 			NowProcess = len(member_list)
 			print(LastProcess, NowProcess)
+			
 			for midx in range(NowProcess-LastProcess):
 				member_info_block = member_list[LastProcess+midx].find_element_by_xpath(".//div[@class='clearfix _8u _42ef']")
 				member_name_info = member_info_block.find_element_by_xpath(".//div[@class='_60ri fsl fwb fcb']")
