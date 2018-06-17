@@ -142,8 +142,6 @@ class  ClubManage():
 			except:
 				print("open like except")
 				pass
-			
-			like_list_block = self.driver.find_element_by_xpath(".//div[@class='uiScrollableAreaContent']")
 
 			has_like_btn = True
 			while has_like_btn:
@@ -160,6 +158,13 @@ class  ClubManage():
 
 			like_list = self.driver.find_elements_by_xpath(".//li[@class='_5i_q']")
 			print("Like Num:", len(like_list))
+
+			# Traverse All the Like
+			for like_block in like_list:
+				like = like_block.find_element_by_xpath(".//div[@class='_6a _5j0c']")
+				like_user = like.find_element_by_xpath(".//a").text
+				like_id = like.find_element_by_xpath(".//a").get_attribute('href')
+				print(like_user, like_id)
 
 
 			# End of Like search Need to click to close the list
