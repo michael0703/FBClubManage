@@ -2,16 +2,18 @@
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import sys
 import time
 import csv
 import codecs
-
+from datetime import date
 
 FB_Url = 'https://facebook.com'
 Club_Url = 'https://www.facebook.com/groups/1603769146534321/?sorting_setting=CHRONOLOGICAL'
+Club_MemberUrl = 'https://www.facebook.com/groups/huberstudents/members/'
 
 CurMonth = 6
 
@@ -32,15 +34,18 @@ class  ClubManage():
 		self.postfd = open("Post.csv", "w")
 		self.commentfd = open("Comment.csv", "w")
 		self.likelistfd = open("Likelist.csv", "w")
+		self.clubmemberfd = open('ClubMember.csv', 'w')
 
 		self.postwriter = csv.writer(self.postfd)
 		self.commentwriter = csv.writer(self.commentfd)
 		self.likelistwriter = csv.writer(self.likelistfd)
+		self.clubmemberwriter = csv.writer(self.clubmemberfd)
 
 		# Add the Field
 		self.postwriter.writerow(['UserName', 'UserId', 'PostTime'])
 		self.commentwriter.writerow(['UserName', 'UserId', 'CommentTime'])
 		self.likelistwriter.writerow(['UserName', 'UserId'])
+		self.clubmemberwriter.writerow(['UserName', 'UserId'])
 
 	def Login(self):
 
@@ -158,6 +163,7 @@ class  ClubManage():
 				except:
 					has_like_btn = False
 
+			time.sleep(1)
 			like_list = self.driver.find_elements_by_xpath(".//li[@class='_5i_q']")
 			print("Like Num:", len(like_list))
 
@@ -241,6 +247,61 @@ class  ClubManage():
 				print(Comment_Actor, Comment_ActorId)
 			
 			print("======")
+	
+	def SearchClubList(self, Club_Url):
+		
+		self.driver.get(Club_Url)
+
+		# Let the member sort by date
+
+		option_btn = self.driver.find_element_by_xpath(".//div[@class='_6a _6b rfloat _ohf']").find_element_by_xpath(".//a")
+		ActionChains(self.driver).click(option_btn).perform()
+		option_btn1 = self.driver.find_element_by_xpath(".//div[@class='_54ng']").find_element_by_xpath(".//span[contains(text(), '加入日期')]")
+		ActionChains(self.driver).click(option_btn1).perform()
+
+		time.sleep(3)
+
+		# let the program works better
+
+		NowProcess = 0
+		LastProcess = 0
+		
+		# notice when can we stop
+		
+		last_height = self.driver.execute_script("return document.body.scrollHeight")
+		new_height = -1
+
+		# One time Process a page and then Scorll 
+
+		while True:
+			member_block = self.driver.find_element_by_xpath(".//div[@id='groupsMemberSection_all_members']")
+			member_list = member_block.find_elements_by_xpath(".//div[@class='clearfix _60rh _gse']")
+			NowProcess = len(member_list)
+			print(LastProcess, NowProcess)
+			for midx in range(NowProcess-LastProcess):
+				member_info_block = member_list[LastProcess+midx].find_element_by_xpath(".//div[@class='clearfix _8u _42ef']")
+				member_name_info = member_info_block.find_element_by_xpath(".//div[@class='_60ri fsl fwb fcb']")
+				member_name = member_name_info.text
+				member_id = member_name_info.find_element_by_xpath(".//a").get_attribute('href')
+				try:
+					member_time = member_info_block.find_element_by_xpath(".//div[@class='_60rj']/abbr").get_attribute('title')
+				except:
+					member_time = str(date.today())
+
+				print(member_name, member_time)
+				
+			LastProcess = len(member_list)
+
+			self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight)")
+			time.sleep(3)
+
+			new_height = self.driver.execute_script("return document.body.scrollHeight")
+			if new_height == last_height:
+				print("end!")
+				break
+			last_height = new_height
+
+
 
 
 if __name__ == '__main__':
@@ -250,8 +311,11 @@ if __name__ == '__main__':
 	account, passwd = sys.argv[1], sys.argv[2]
 	Manager = ClubManage(account, passwd)
 	Manager.Login()
-	Manager.EnterClub(Club_Url)
-	Manager.SearchPost()
+
+	#Manager.EnterClub(Club_Url)
+	#Manager.SearchPost()
+
+	Manager.SearchClubList(Club_MemberUrl)
 
 	
 
