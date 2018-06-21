@@ -47,7 +47,7 @@ class  ClubManage():
 		self.postwriter.writerow(['UserName', 'UserId', 'PostTime'])
 		self.commentwriter.writerow(['UserName', 'UserId', 'CommentTime'])
 		self.likelistwriter.writerow(['UserName', 'UserId'])
-		self.clubmemberwriter.writerow(['UserName', 'UserId'])
+		self.clubmemberwriter.writerow(['UserName', 'UserId', 'JoinDate'])
 
 	def Login(self):
 
@@ -82,6 +82,9 @@ class  ClubManage():
 				if idx == 0:
 					continue
 				post_time = post.find_element_by_xpath(".//abbr[contains(@class,'_5ptz')]").get_attribute("title")
+				
+				# It will GO WRONG when cross a year!!!!!!!!!!! Need to modify
+
 				if int(post_time.split()[0].split('-')[1]) < CurMonth:
 					print("End of search!", post_time.split()[0].split('-')[1])
 					flag = False
@@ -107,6 +110,8 @@ class  ClubManage():
 			self.commentwriter.writerow(encdata)
 		elif Type == 'Like':
 			self.likelistwriter.writerow(encdata)
+		elif Type == 'ClubMem':
+			self.clubmemberwriter.writerow(encdata)
 	
 	def SearchPost(self, Url):
 		self.driver.get(Url);
@@ -274,10 +279,12 @@ class  ClubManage():
 		# One time Process a page and then Scorll 
 
 		while True:
+
 			member_block = self.driver.find_element_by_xpath(".//div[@id='groupsMemberSection_all_members']")
 			member_list = member_block.find_elements_by_xpath(".//div[@class='clearfix _60rh _gse']")
 			NowProcess = len(member_list)
 			print(LastProcess, NowProcess)
+
 			for midx in range(NowProcess-LastProcess):
 				member_info_block = member_list[LastProcess+midx].find_element_by_xpath(".//div[@class='clearfix _8u _42ef']")
 				member_name_info = member_info_block.find_element_by_xpath(".//div[@class='_60ri fsl fwb fcb']")
@@ -285,9 +292,10 @@ class  ClubManage():
 				member_id = member_name_info.find_element_by_xpath(".//a").get_attribute('href')
 				try:
 					member_time = member_info_block.find_element_by_xpath(".//div[@class='_60rj']/abbr").get_attribute('title')
+					member_time = member_time.split()[0].split('年')[0] +'-'+ member_time.split()[0].split('年')[1].split('月')[0] +'-'+ member_time.split()[0].split('月')[1].split('日')[0]
 				except:
 					member_time = str(date.today())
-
+				self.WriteToFile(self.clubmemberfd, [member_name, member_id, member_time], 'ClubMem')
 				print(member_name, member_time)
 				
 			LastProcess = len(member_list)
