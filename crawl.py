@@ -11,7 +11,6 @@ import csv
 import codecs
 from datetime import date
 
-FB_Url = 'https://facebook.com'
 Club_Url = 'https://www.facebook.com/groups/1603769146534321/?sorting_setting=CHRONOLOGICAL'
 Club_MemberUrl = 'https://www.facebook.com/groups/huberstudents/members/'
 
@@ -19,6 +18,7 @@ CurMonth = 6
 
 class  ClubManage():
 	def __init__(self, account, passwd):
+		self.FB_Url = 'https://facebook.com'
 
 		self.account = account
 		self.passwd = passwd
@@ -27,6 +27,8 @@ class  ClubManage():
 		chrome_options = webdriver.ChromeOptions()
 		prefs = {"profile.default_content_setting_values.notifications" : 2}
 		chrome_options.add_experimental_option("prefs",prefs)
+		chrome_options.add_argument('--headless')
+		chrome_options.add_argument('--disable-gpu')
 		self.driver = webdriver.Chrome(chrome_options=chrome_options)
 		self.driver.set_window_size(1920,1080)
 
@@ -50,14 +52,11 @@ class  ClubManage():
 	def Login(self):
 
 		# Login to FB
-		self.driver.get(FB_Url)
+		self.driver.get(self.FB_Url)
 		self.driver.find_element_by_name("email").send_keys(self.account)
 		self.driver.find_element_by_name("pass").send_keys(self.passwd)
 		self.driver.find_element_by_xpath("//label[@id='loginbutton']/input").click()
-	
-	def EnterClub(self, Url):
 
-		self.driver.get(Url);
 
 	def LocateToTheLatest(self):
 
@@ -109,7 +108,8 @@ class  ClubManage():
 		elif Type == 'Like':
 			self.likelistwriter.writerow(encdata)
 	
-	def SearchPost(self):
+	def SearchPost(self, Url):
+		self.driver.get(Url);
 		
 		# Use this func to first load all the CurMonth Post
 		# Uncomment it when u need the whole result. OTHERWISE, COMMENT IT WHILE TESTING!
@@ -312,10 +312,9 @@ if __name__ == '__main__':
 	Manager = ClubManage(account, passwd)
 	Manager.Login()
 
-	#Manager.EnterClub(Club_Url)
-	#Manager.SearchPost()
+	Manager.SearchPost(Club_Url)
 
-	Manager.SearchClubList(Club_MemberUrl)
+	# Manager.SearchClubList(Club_MemberUrl)
 
 	
 
