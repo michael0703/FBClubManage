@@ -13,6 +13,7 @@ from datetime import date
 
 Club_Url = 'https://www.facebook.com/groups/1603769146534321/?sorting_setting=CHRONOLOGICAL'
 Club_MemberUrl = 'https://www.facebook.com/groups/huberstudents/members/'
+driver_path = 'C:\Program Files (x86)\ChromeDriver\chromedriver.exe'
 
 CurMonth = 6
 
@@ -29,7 +30,7 @@ class  ClubManage():
 		chrome_options.add_experimental_option("prefs",prefs)
 		chrome_options.add_argument('--headless')
 		chrome_options.add_argument('--disable-gpu')
-		self.driver = webdriver.Chrome(chrome_options=chrome_options)
+		self.driver = webdriver.Chrome(dirver_path, chrome_options=chrome_options)
 		self.driver.set_window_size(1920,1080)
 
 		# Create output files first
