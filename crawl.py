@@ -30,7 +30,7 @@ class  ClubManage():
 		chrome_options.add_experimental_option("prefs",prefs)
 		chrome_options.add_argument('--headless')
 		chrome_options.add_argument('--disable-gpu')
-		self.driver = webdriver.Chrome(dirver_path, chrome_options=chrome_options)
+		self.driver = webdriver.Chrome(driver_path, chrome_options=chrome_options)
 		self.driver.set_window_size(1920,1080)
 
 		# Create output files first
