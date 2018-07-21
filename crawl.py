@@ -28,8 +28,8 @@ class  ClubManage():
 		chrome_options = webdriver.ChromeOptions()
 		prefs = {"profile.default_content_setting_values.notifications" : 2}
 		chrome_options.add_experimental_option("prefs",prefs)
-		chrome_options.add_argument('--headless')
-		chrome_options.add_argument('--disable-gpu')
+		#chrome_options.add_argument('--headless')
+		#chrome_options.add_argument('--disable-gpu')
 		self.driver = webdriver.Chrome(driver_path, chrome_options=chrome_options)
 		self.driver.set_window_size(1920,1080)
 
@@ -266,6 +266,7 @@ class  ClubManage():
 		ActionChains(self.driver).click(option_btn1).perform()
 
 		time.sleep(3)
+		print("Done first Part")
 
 		# let the program works better
 
@@ -290,14 +291,19 @@ class  ClubManage():
 				member_info_block = member_list[LastProcess+midx].find_element_by_xpath(".//div[@class='clearfix _8u _42ef']")
 				member_name_info = member_info_block.find_element_by_xpath(".//div[@class='_60ri fsl fwb fcb']")
 				member_name = member_name_info.text
-				member_id = member_name_info.find_element_by_xpath(".//a").get_attribute('href')
+				try:
+					member_id = member_list[LastProcess+midx].find_element_by_xpath(".//a[@class='_60rg _8o _8r lfloat _ohe']").get_attribute('href')
+				except:
+					member_id = "xxxxxxx?Doesn't_Have_url"
+
 				try:
 					member_time = member_info_block.find_element_by_xpath(".//div[@class='_60rj']/abbr").get_attribute('title')
 					member_time = member_time.split()[0].split('年')[0] +'-'+ member_time.split()[0].split('年')[1].split('月')[0] +'-'+ member_time.split()[0].split('月')[1].split('日')[0]
 				except:
 					member_time = str(date.today())
+				print(member_name, member_time, member_id)
 				self.WriteToFile(self.clubmemberfd, [member_name, member_id, member_time], 'ClubMem')
-				print(member_name, member_time)
+				
 				
 			LastProcess = len(member_list)
 
