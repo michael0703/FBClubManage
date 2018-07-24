@@ -72,7 +72,7 @@ class MainApplication():
 
     # self.text = tk.Text(self.master,yscrollcommand=self.scrollbar.set)
     # self.text = tk.Text(self.master, height=5)
-    self.text = tk.scrolledtext.ScrolledText(self.master, height=5)
+    self.text = tk.scrolledtext.ScrolledText(self.master, height=40)
     self.text.grid(column=0, row=1, sticky='w', padx=5)
 
     # redirect stdout to text field
