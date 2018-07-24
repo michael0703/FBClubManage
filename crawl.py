@@ -145,17 +145,18 @@ class  ClubManage():
 
 			#########################################
 			# Locate the Like and Push the btn
-			try:			
-				like_box = post.find_element_by_xpath(".//div[contains(@class,'UFIRow') and contains(@class,'UFILikeSentence')]")
-				like_btn = like_box.find_elements_by_xpath(".//a[@class='_2x4v']")
-				ActionChains(self.driver).click(like_btn[0]).perform()
-				#print("click the like expand button", like_btn[0])
-				while len(self.driver.find_elements_by_xpath(".//li[@class='_5i_q']")) == 0:
-					time.sleep(1)
+#			try:			
+			like_box = post.find_element_by_xpath(".//div[contains(@class,'_3399') and contains(@class,'_1f6t')]")
+			like_btn = like_box.find_elements_by_xpath(".//a[@class='_2x4v']")
+			ActionChains(self.driver).click(like_btn[0]).perform()
+			#print("click the like expand button", like_btn[0])
+			while len(self.driver.find_elements_by_xpath(".//li[@class='_5i_q']")) == 0:
+				time.sleep(1)
+			'''
 			except:
 				print("open like except")
 				pass
-
+			'''
 			has_like_btn = True
 			while has_like_btn:
 				try:
@@ -196,6 +197,7 @@ class  ClubManage():
 			# Locate the Comments
 			comments_box = post.find_elements_by_xpath(".//div[@class='_3b-9 _j6a']")
 			if len(comments_box) == 0:
+				print("no comments")
 				continue
 			
 			#########################################
@@ -237,7 +239,7 @@ class  ClubManage():
 			time.sleep(1)
 			comment_list = comments_box[0].find_elements_by_xpath(".//div[@role='article']")
 
-			print("Commentors:")
+			print("Commentors: {}".format(str(len(comment_list))))
 
 			# Traverse all the comments
 			for comment in comment_list:
@@ -301,7 +303,7 @@ class  ClubManage():
 					member_time = member_time.split()[0].split('年')[0] +'-'+ member_time.split()[0].split('年')[1].split('月')[0] +'-'+ member_time.split()[0].split('月')[1].split('日')[0]
 				except:
 					member_time = str(date.today())
-				print(member_name, member_time, member_id)
+				#print(member_name, member_time, member_id)
 				self.WriteToFile(self.clubmemberfd, [member_name, member_id, member_time], 'ClubMem')
 				
 				
@@ -315,9 +317,6 @@ class  ClubManage():
 				print("end!")
 				break
 			last_height = new_height
-
-
-
 
 if __name__ == '__main__':
 	if len(sys.argv) <= 2:

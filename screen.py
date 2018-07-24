@@ -4,7 +4,7 @@ import threading
 import tkinter as tk
 from tkinter import ttk  
 from tkinter.scrolledtext import ScrolledText
-
+import time
 import crawl
 
 Club_Url = 'https://www.facebook.com/groups/1603769146534321/?sorting_setting=CHRONOLOGICAL'
@@ -118,9 +118,10 @@ class MainApplication():
   def crawlPost(self):
     if not self.isLogin:
       print("登入中，請稍待...\n")
-      threading.Thread(target=self.fbLogin).start()
+      #threading.Thread(target=self.fbLogin).start()
+      self.fbLogin()
+    self.Manager.SearchPost(Club_Url)
 
-    # self.Manager.SearchPost(Club_Url)
 
 
 if __name__ =='__main__':
