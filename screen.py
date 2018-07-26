@@ -6,6 +6,7 @@ from tkinter import ttk
 from tkinter.scrolledtext import ScrolledText
 import time
 import crawl
+import Analyze
 
 Club_Url = 'https://www.facebook.com/groups/1603769146534321/?sorting_setting=CHRONOLOGICAL'
 Club_MemberUrl = 'https://www.facebook.com/groups/huberstudents/members/'
@@ -25,10 +26,12 @@ class RedirectText(object):
 class MainApplication():
   def __init__(self, master=None):
     master.title('FB社團神器')
-    master.resizable(0,0)
+    #master.resizable(0,0)
 
     self.isLogin = False
     self.Manager = None
+    self.Analyzer = None
+
 
     self.master = master
     self.master.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -72,7 +75,7 @@ class MainApplication():
 
     # self.text = tk.Text(self.master,yscrollcommand=self.scrollbar.set)
     # self.text = tk.Text(self.master, height=5)
-    self.text = tk.scrolledtext.ScrolledText(self.master, height=40)
+    self.text = tk.scrolledtext.ScrolledText(self.master, height=20)
     self.text.grid(column=0, row=1, sticky='w', padx=5)
 
     # redirect stdout to text field
@@ -87,7 +90,7 @@ class MainApplication():
     self.button2 = ttk.Button(self.master,text="爬Po文/回覆/按讚名單", command=self.crawlPost)
     self.button2.grid(row=3, sticky='we', padx=5)
 
-    self.button3 = ttk.Button(self.master,text="爬潛水名單")
+    self.button3 = ttk.Button(self.master,text="爬潛水名單", command=self.crawlAnalyze)
     self.button3.grid(row=4, sticky='we', padx=5, pady=(0,5))
 
 
@@ -121,6 +124,15 @@ class MainApplication():
       #threading.Thread(target=self.fbLogin).start()
       self.fbLogin()
     self.Manager.SearchPost(Club_Url)
+
+  def crawlAnalyze(self):
+
+    self.Analyzer = Analyze.UnionFile('Comment.csv', 'Likelist.csv', 'ClubMember.csv')
+    self.Analyzer.InitSet()
+    self.Analyzer.Union()
+    self.Analyzer.Diff()
+    self.Analyzer.PrintSet()
+    self.Analyzer.WriteFile()
 
 
 
