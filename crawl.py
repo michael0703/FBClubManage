@@ -50,6 +50,9 @@ class  ClubManage():
 		self.likelistwriter.writerow(['UserName', 'UserId'])
 		self.clubmemberwriter.writerow(['UserName', 'UserId', 'JoinDate'])
 
+		# Kick out criteria
+		self.kickday = 15
+
 	def Login(self):
 
 		# Login to FB
@@ -256,6 +259,21 @@ class  ClubManage():
 			
 			print("======")
 	
+
+	def isRecentAdd(self, AddDate, TodayDate):
+
+		#print(int(AddDate), int(TodayDate))
+		#print(TimeDiff)
+		TimeDiff = int(TodayDate)-int(AddDate)
+		TimeBound = self.kickday * 86400
+		if TimeDiff <= TimeBound:
+			return True
+		else:
+			return False
+
+
+
+
 	def SearchClubList(self, Club_Url):
 		
 		self.driver.get(Club_Url)
@@ -300,11 +318,15 @@ class  ClubManage():
 
 				try:
 					member_time = member_info_block.find_element_by_xpath(".//div[@class='_60rj']/abbr").get_attribute('title')
+					member_utime = member_info_block.find_element_by_xpath(".//div[@class='_60rj']/abbr").get_attribute('data-utime')
 					member_time = member_time.split()[0].split('年')[0] +'-'+ member_time.split()[0].split('年')[1].split('月')[0] +'-'+ member_time.split()[0].split('月')[1].split('日')[0]
 				except:
+					member_utime = time.time()
 					member_time = str(date.today())
 				#print(member_name, member_time, member_id)
-				self.WriteToFile(self.clubmemberfd, [member_name, member_id, member_time], 'ClubMem')
+				if not self.isRecentAdd(member_utime, time.time()):
+					print(member_name, member_time)
+					self.WriteToFile(self.clubmemberfd, [member_name, member_id, member_time], 'ClubMem')
 				
 				
 			LastProcess = len(member_list)
@@ -326,9 +348,9 @@ if __name__ == '__main__':
 	Manager = ClubManage(account, passwd)
 	Manager.Login()
 
-	Manager.SearchPost(Club_Url)
+	#Manager.SearchPost(Club_Url)
 
-	# Manager.SearchClubList(Club_MemberUrl)
+	Manager.SearchClubList(Club_MemberUrl)
 
 	
 
