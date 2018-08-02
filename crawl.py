@@ -13,7 +13,7 @@ from datetime import date
 
 Club_Url = 'https://www.facebook.com/groups/1603769146534321/?sorting_setting=CHRONOLOGICAL'
 Club_MemberUrl = 'https://www.facebook.com/groups/huberstudents/members/'
-driver_path = 'C:\Program Files (x86)\ChromeDriver\chromedriver.exe'
+#driver_path = 'C:\Program Files (x86)\ChromeDriver\chromedriver.exe'
 
 CurMonth = 6
 
@@ -30,7 +30,8 @@ class  ClubManage():
 		chrome_options.add_experimental_option("prefs",prefs)
 		#chrome_options.add_argument('--headless')
 		#chrome_options.add_argument('--disable-gpu')
-		self.driver = webdriver.Chrome(driver_path, chrome_options=chrome_options)
+		#self.driver = webdriver.Chrome(driver_path, chrome_options=chrome_options)
+		self.driver = webdriver.Chrome(chrome_options=chrome_options)
 		self.driver.set_window_size(1920,1080)
 
 		# Create output files first
@@ -332,7 +333,30 @@ class  ClubManage():
 			LastProcess = len(member_list)
 
 			self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight)")
-			time.sleep(3)
+			
+
+
+
+			# time.sleep(3)
+			
+			# use busy waiting to replace sleep 
+			loading_block = self.driver.find_elements_by_xpath(".//div[@id='groupsMemberSection_all_members']")
+			if not loading_block:
+				print('loading block occur')
+			else:
+				browser_block = loading_block[0].find_elements_by_xpath(".//div[contains(@class,'fbProfileBrowserList')]")
+				if not browser_block:
+					print('browser block occur!')
+				else:
+					print('still loading?')
+					loading_flag = preloading_flag = loading_block[0].find_element_by_xpath(".//span[@class='uiMorePagerLoader pam uiBoxLightblue']")
+					while(1):
+						loading_flag = loading_block[0].find_element_by_xpath(".//span[@class='uiMorePagerLoader pam uiBoxLightblue']")
+						if preloading_flag != loading_flag:
+							break
+						preloading_flag = loading_flag
+
+
 
 			new_height = self.driver.execute_script("return document.body.scrollHeight")
 			if new_height == last_height:
