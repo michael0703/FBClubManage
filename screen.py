@@ -1,3 +1,4 @@
+# coding:utf-8
 import sys
 import signal
 import threading
@@ -68,6 +69,11 @@ class MainApplication():
     self.passwordInput = ttk.Entry(self.mainFrame, show='*')
     self.passwordInput.grid(column=1, row=1)
 
+    self.urlLabel  = ttk.Label(self.mainFrame, text="社團網址", background="#fff")
+    self.urlLabel.grid(column=0, row=2, sticky='w')
+    self.urlInput = ttk.Entry(self.mainFrame)
+    self.urlInput.grid(column=1, row=2)
+
 
   def createTextfield(self):
     # self.scrollbar = tk.Scrollbar(self.master)
@@ -102,6 +108,7 @@ class MainApplication():
   def fbLogin(self):
     try:
       account, passwd = self.usernameInput.get(), self.passwordInput.get()
+      club_Url = self.urlInput.get() # Club URL
       self.Manager = crawl.ClubManage(account, passwd)
       self.Manager.Login()
       self.text.insert( tk.END, "Login!\n" )
