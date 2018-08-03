@@ -15,7 +15,7 @@ Club_Url = 'https://www.facebook.com/groups/1603769146534321/?sorting_setting=CH
 Club_MemberUrl = 'https://www.facebook.com/groups/huberstudents/members/'
 #driver_path = 'C:\Program Files (x86)\ChromeDriver\chromedriver.exe'
 
-CurMonth = 6
+CurMonth = 8
 
 class  ClubManage():
 	def __init__(self, account, passwd):
@@ -338,23 +338,26 @@ class  ClubManage():
 
 
 			# time.sleep(3)
-			
 			# use busy waiting to replace sleep 
 			loading_block = self.driver.find_elements_by_xpath(".//div[@id='groupsMemberSection_all_members']")
 			if not loading_block:
-				print('loading block occur')
+				print('error: cant load loading_block')
 			else:
-				browser_block = loading_block[0].find_elements_by_xpath(".//div[contains(@class,'fbProfileBrowserList')]")
+				browser_block = loading_block[0].find_elements_by_xpath(".//div[@class='fbProfileBrowserList fbProfileBrowserListContainer']")
 				if not browser_block:
-					print('browser block occur!')
+					print('error: cant load browser_block!')
 				else:
 					print('still loading?')
-					loading_flag = preloading_flag = loading_block[0].find_element_by_xpath(".//span[@class='uiMorePagerLoader pam uiBoxLightblue']")
-					while(1):
-						loading_flag = loading_block[0].find_element_by_xpath(".//span[@class='uiMorePagerLoader pam uiBoxLightblue']")
-						if preloading_flag != loading_flag:
-							break
-						preloading_flag = loading_flag
+					endloading_flag = browser_block[0].find_elements_by_xpath(".//div[contains(@class, 'fbProfileBrowserNoMoreItems')]")
+					if endloading_flag:
+						print('end loading!')
+					else:
+						loading_flag = preloading_flag = loading_block[0].find_element_by_xpath(".//span[@class='uiMorePagerLoader pam uiBoxLightblue']")
+						while(1):
+							loading_flag = loading_block[0].find_element_by_xpath(".//span[@class='uiMorePagerLoader pam uiBoxLightblue']")
+							if preloading_flag != loading_flag:
+								break
+							preloading_flag = loading_flag
 
 
 

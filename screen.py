@@ -12,7 +12,7 @@ import Analyze
 Club_Url = 'https://www.facebook.com/groups/1603769146534321/?sorting_setting=CHRONOLOGICAL'
 Club_MemberUrl = 'https://www.facebook.com/groups/huberstudents/members/'
 
-CurMonth = 6
+CurMonth = 8
 
 class RedirectText(object):
   def __init__(self, text_ctrl):
