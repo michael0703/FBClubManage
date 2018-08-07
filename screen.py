@@ -142,10 +142,22 @@ class MainApplication():
       self.Analyzer.PrintSet()
       self.Analyzer.WriteFile()
     except:
-      print('請先執行"爬社團成員名單 and 爬留言按讚",再來分析')
+      #print('請先執行"爬社團成員名單 and 爬留言按讚",再來分析')
+      print('開始爬社團成員名單...')
+      self.crawlClubList()
+      print('開始爬按讚留言...')
+      self.crawlPost()
+      print('重新開始分析潛水名單...')
+      self.Analyzer = Analyze.UnionFile('Comment.csv', 'Likelist.csv', 'ClubMember.csv')
+      self.Analyzer.InitSet()
+      self.Analyzer.Union()
+      self.Analyzer.Diff()
+      self.Analyzer.PrintSet()
+      self.Analyzer.WriteFile()
 
 
 if __name__ =='__main__':
   window = tk.Tk()
   app = MainApplication(master=window)
+  print('再執行以下功能前，請先輸入帳號密碼以及社團網址!!!')
   window.mainloop()
