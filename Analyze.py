@@ -2,6 +2,7 @@ import math
 import time
 import csv
 
+
 class UnionFile():
 	
 	def __init__(self, firstfilename, secondfilename, thirdfilename):

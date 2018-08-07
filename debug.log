@@ -149,3 +149,4 @@
 [0731/172856.050:ERROR:exception_snapshot_win.cc(88)] thread ID 20308 not found in process
 [0731/173032.422:ERROR:process_reader_win.cc(123)] NtOpenThread: {拒絕存取} 程序已請求存取一物件，但未被授與存取權。 (0xc0000022)
 [0731/173032.423:ERROR:exception_snapshot_win.cc(88)] thread ID 20908 not found in process
+[0807/111506.931:ERROR:file_io_win.cc(179)] CreateFile C:\Users\michael\AppData\Local\Temp\scoped_dir19236_30708\Crashpad\settings.dat: 程序無法存取檔案，因為檔案正由另一個程序使用。 (0x20)

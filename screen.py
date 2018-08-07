@@ -142,11 +142,22 @@ class MainApplication():
       self.Analyzer.PrintSet()
       self.Analyzer.WriteFile()
     except:
-      #print('請先執行"爬社團成員名單 and 爬留言按讚",再來分析')
-      print('開始爬社團成員名單...')
-      self.crawlClubList()
-      print('開始爬按讚留言...')
-      self.crawlPost()
+      try:
+        tmpfile3fd = open('ClubMember.csv', 'r')
+        tmpfile3fd.close()
+      except:
+        print('缺少社團成員名單,開始爬社團成員')
+        self.crawlClubList()
+      try:
+        tmpfile1fd = open('Comment.csv', 'r')
+        tmpfile2fd = open('Likelist.csv', 'r')
+        tmpfile1fd.close()
+        tmpfile2fd.close()
+      except:
+        print('缺少Post,開始爬留言按讚...')
+        self.crawlPost()
+
+      
       print('重新開始分析潛水名單...')
       self.Analyzer = Analyze.UnionFile('Comment.csv', 'Likelist.csv', 'ClubMember.csv')
       self.Analyzer.InitSet()
