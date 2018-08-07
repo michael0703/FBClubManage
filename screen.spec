@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['screen.py'],
-             pathex=['/Users/weizhong/Case/Python-FbClubManage'],
+             pathex=['C:\\Users\\michael\\Desktop\\michael\\Case\\Python-FbClubManage'],
              binaries=[],
              datas=[],
              hiddenimports=[],

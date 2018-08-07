@@ -134,13 +134,15 @@ class MainApplication():
 
   def crawlAnalyze(self):
 
-    self.Analyzer = Analyze.UnionFile('Comment.csv', 'Likelist.csv', 'ClubMember.csv')
-    self.Analyzer.InitSet()
-    self.Analyzer.Union()
-    self.Analyzer.Diff()
-    self.Analyzer.PrintSet()
-    self.Analyzer.WriteFile()
-
+    try:
+      self.Analyzer = Analyze.UnionFile('Comment.csv', 'Likelist.csv', 'ClubMember.csv')
+      self.Analyzer.InitSet()
+      self.Analyzer.Union()
+      self.Analyzer.Diff()
+      self.Analyzer.PrintSet()
+      self.Analyzer.WriteFile()
+    except:
+      print('請先執行"爬社團成員名單 and 爬留言按讚",再來分析')
 
 
 if __name__ =='__main__':
