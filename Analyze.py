@@ -2,6 +2,7 @@ import math
 import time
 import csv
 
+
 class UnionFile():
 	
 	def __init__(self, firstfilename, secondfilename, thirdfilename):
@@ -40,9 +41,9 @@ class UnionFile():
 
 	def PrintSet(self):
 
-		#print(self.firstset)
-		#print(self.secondset)
-		#print(self.thirdset)
+		print(self.firstset)
+		print(self.secondset)
+		print(self.thirdset)
 		print(self.diffset)
 		print('==========')
 
