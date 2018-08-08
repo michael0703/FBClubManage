@@ -354,6 +354,7 @@ class  ClubManage():
 					else:
 						loading_flag = preloading_flag = loading_block[0].find_element_by_xpath(".//span[@class='uiMorePagerLoader pam uiBoxLightblue']")
 						while(1):
+							print('whileloop loading.......')
 							loading_flag = loading_block[0].find_element_by_xpath(".//span[@class='uiMorePagerLoader pam uiBoxLightblue']")
 							if preloading_flag != loading_flag:
 								break
