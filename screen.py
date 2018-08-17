@@ -6,6 +6,9 @@ import tkinter as tk
 from tkinter import ttk  
 from tkinter.scrolledtext import ScrolledText
 import time
+import pickle
+import os.path
+
 import crawl
 import Analyze
 
@@ -13,6 +16,8 @@ Club_Url = 'https://www.facebook.com/groups/1603769146534321/?sorting_setting=CH
 Club_MemberUrl = 'https://www.facebook.com/groups/huberstudents/members/'
 
 CurMonth = 8
+
+SAVE_FILE = "save.pkl"
 
 class RedirectText(object):
   def __init__(self, text_ctrl):
@@ -74,6 +79,12 @@ class MainApplication():
     self.urlInput = ttk.Entry(self.mainFrame)
     self.urlInput.grid(column=1, row=2)
 
+    if os.path.exists(SAVE_FILE):
+    	data = pickle.load(open(SAVE_FILE, "rb"))
+    	self.usernameInput.insert(tk.END, data["username"])
+    	self.passwordInput.insert(tk.END, data["password"])
+    	self.urlInput.insert(tk.END, data["url"])
+
 
   def createTextfield(self):
     # self.scrollbar = tk.Scrollbar(self.master)
@@ -113,6 +124,14 @@ class MainApplication():
       self.Manager.Login()
       self.text.insert( tk.END, "Login!\n" )
       self.isLogin = True
+
+      if not os.path.exists(SAVE_FILE):
+      	data = {
+      		"username": account,
+      		"password": passwd,
+      		"url": club_Url
+      	}
+      	pickle.dump(data, open(SAVE_FILE, "wb"))
 
     except KeyboardInterrupt:
       self.Manager.driver.quit()
