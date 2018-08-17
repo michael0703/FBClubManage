@@ -146,7 +146,7 @@ class MainApplication():
         tmpfile3fd = open('ClubMember.csv', 'r')
         tmpfile3fd.close()
       except:
-        print('缺少社團成員名單,開始爬社團成員')
+        #print('缺少社團成員名單,開始爬社團成員')
         self.crawlClubList()
       try:
         tmpfile1fd = open('Comment.csv', 'r')
@@ -154,11 +154,11 @@ class MainApplication():
         tmpfile1fd.close()
         tmpfile2fd.close()
       except:
-        print('缺少Post,開始爬留言按讚...')
+        #print('缺少Post,開始爬留言按讚...')
         self.crawlPost()
 
       
-      print('重新開始分析潛水名單...')
+      #print('重新開始分析潛水名單...')
       self.Analyzer = Analyze.UnionFile('Comment.csv', 'Likelist.csv', 'ClubMember.csv')
       self.Analyzer.InitSet()
       self.Analyzer.Union()
