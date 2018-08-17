@@ -5,6 +5,7 @@ import threading
 from queue import Queue
 import tkinter as tk
 from tkinter import ttk  
+from tkinter import messagebox
 from tkinter.scrolledtext import ScrolledText
 import time
 import pickle
@@ -13,8 +14,8 @@ import os.path
 import crawl
 import Analyze
 
-Club_Url = 'https://www.facebook.com/groups/1603769146534321/?sorting_setting=CHRONOLOGICAL'
-Club_MemberUrl = 'https://www.facebook.com/groups/huberstudents/members/'
+# Club_Url = 'https://www.facebook.com/groups/1603769146534321/?sorting_setting=CHRONOLOGICAL'
+# Club_MemberUrl = 'https://www.facebook.com/groups/huberstudents/members/'
 
 CurMonth = 8
 
@@ -40,6 +41,9 @@ class MainApplication():
     self.Manager = None
     self.Analyzer = None
 
+    self.account = ""
+    self.passwd = ""
+    self.club_Url = ""
 
     self.master = master
     self.master.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -84,10 +88,10 @@ class MainApplication():
     self.urlInput.grid(column=1, row=2)
 
     if os.path.exists(SAVE_FILE):
-    	data = pickle.load(open(SAVE_FILE, "rb"))
-    	self.usernameInput.insert(tk.END, data["username"])
-    	self.passwordInput.insert(tk.END, data["password"])
-    	self.urlInput.insert(tk.END, data["url"])
+      data = pickle.load(open(SAVE_FILE, "rb"))
+      self.usernameInput.insert(tk.END, data["username"])
+      self.passwordInput.insert(tk.END, data["password"])
+      self.urlInput.insert(tk.END, data["url"])
 
 
   def createTextfield(self):
@@ -122,20 +126,22 @@ class MainApplication():
 
   def fbLogin(self):
     try:
-      account, passwd = self.usernameInput.get(), self.passwordInput.get()
-      club_Url = self.urlInput.get() # Club URL
-      self.Manager = crawl.ClubManage(account, passwd)
-      self.Manager.Login()
+      print("登入中，請稍待...\n")
+      self.account, self.passwd = self.usernameInput.get(), self.passwordInput.get()
+      self.club_Url = self.urlInput.get() # Club URL
+      self.Manager = crawl.ClubManage(self.account, self.passwd)
+      if not self.Manager.Login():
+        print("登入失敗!請再輸入一次")
+        return
       self.text.insert( tk.END, "Login!\n" )
       self.isLogin = True
 
-      if not os.path.exists(SAVE_FILE):
-      	data = {
-      		"username": account,
-      		"password": passwd,
-      		"url": club_Url
-      	}
-      	pickle.dump(data, open(SAVE_FILE, "wb"))
+      data = {
+        "username": self.account,
+        "password": self.passwd,
+        "url": self.club_Url
+      }
+      pickle.dump(data, open(SAVE_FILE, "wb"))
 
     except KeyboardInterrupt:
       self.Manager.driver.quit()
@@ -148,7 +154,15 @@ class MainApplication():
     if not self.isLogin:
       self.fbLogin()
 
-    self.Manager.SearchClubList(Club_MemberUrl)
+    club_MemberUrl = ""
+
+    if self.club_Url[-1] == '/':
+      club_MemberUrl = self.club_Url + "members/"
+    else:
+      club_MemberUrl = self.club_Url + "/members/"
+
+    self.Manager.SearchClubList(club_MemberUrl)
+    messagebox.showinfo("社團爬蟲完畢" , "社團名單爬蟲完畢! 名單檔案為 ClubMember.csv")
 
 
   def crawlPostThread(self):
@@ -156,11 +170,17 @@ class MainApplication():
 
   def crawlPost(self):
     if not self.isLogin:
-      print("登入中，請稍待...\n")
-      # threading.Thread(target=self.fbLogin)start()
       self.fbLogin()
 
-    self.Manager.SearchPost(Club_Url)
+    club_Url_Recent = ""
+
+    if self.club_Url[-1] == '/':
+      club_Url_Recent = self.club_Url + "?sorting_setting=CHRONOLOGICAL/"
+    else:
+      club_Url_Recent = self.club_Url + "/?sorting_setting=CHRONOLOGICAL/"
+
+    self.Manager.SearchPost(club_Url_Recent)
+    messagebox.showinfo("社團爬蟲完畢" , "社團Po文爬蟲完畢! 名單檔案為 Post.csv, Comment.csv, Likelist.csv")
 
 
   def crawlAnalyzeThread(self):

@@ -11,8 +11,6 @@ import csv
 import codecs
 from datetime import date
 
-Club_Url = 'https://www.facebook.com/groups/1603769146534321/?sorting_setting=CHRONOLOGICAL'
-Club_MemberUrl = 'https://www.facebook.com/groups/huberstudents/members/'
 driver_path = 'C:\Program Files (x86)\ChromeDriver\chromedriver.exe'
 
 CurMonth = 8
@@ -60,7 +58,18 @@ class  ClubManage():
 		self.driver.get(self.FB_Url)
 		self.driver.find_element_by_name("email").send_keys(self.account)
 		self.driver.find_element_by_name("pass").send_keys(self.passwd)
-		self.driver.find_element_by_xpath("//label[@id='loginbutton']/input").click()
+
+		try:
+			self.driver.find_element_by_xpath("//label[@id='loginbutton']/input").click()
+		except:
+			self.driver.find_element_by_xpath("//button[@type='submit']").click()
+
+		try:
+			self.driver.find_element_by_name("pass")
+			self.driver.close()
+			return False
+		except:
+			return True # Login success
 
 
 	def LocateToTheLatest(self):
@@ -281,13 +290,16 @@ class  ClubManage():
 
 		# Let the member sort by date
 
-		option_btn = self.driver.find_element_by_xpath(".//div[@class='_6a _6b rfloat _ohf']").find_element_by_xpath(".//a")
-		ActionChains(self.driver).click(option_btn).perform()
-		option_btn1 = self.driver.find_element_by_xpath(".//div[@class='_54ng']").find_element_by_xpath(".//span[contains(text(), '加入日期')]")
-		ActionChains(self.driver).click(option_btn1).perform()
+		try:
+			option_btn = self.driver.find_element_by_xpath(".//div[@class='_6a _6b rfloat _ohf']").find_element_by_xpath(".//a")
+			ActionChains(self.driver).click(option_btn).perform()
+			option_btn1 = self.driver.find_element_by_xpath(".//div[@class='_54ng']").find_element_by_xpath(".//span[contains(text(), '加入日期')]")
+			ActionChains(self.driver).click(option_btn1).perform()
 
-		time.sleep(3)
-		print("Done first Part")
+			time.sleep(3)
+			print("Done first Part")
+		except:
+			print("您非社團管理員,可能會造成爬名單有誤")
 
 		# let the program works better
 
@@ -303,7 +315,11 @@ class  ClubManage():
 
 		while True:
 
-			member_block = self.driver.find_element_by_xpath(".//div[@id='groupsMemberSection_all_members']")
+			try:
+				member_block = self.driver.find_element_by_xpath(".//div[@id='groupsMemberSection_all_members']")
+			except:
+				member_block = self.driver.find_element_by_xpath(".//div[@id='groupsMemberSection_recently_joined']")
+
 			member_list = member_block.find_elements_by_xpath(".//div[@class='clearfix _60rh _gse']")
 			NowProcess = len(member_list)
 			print(LastProcess, NowProcess)
@@ -343,7 +359,10 @@ class  ClubManage():
 			if not loading_block:
 				print('error: cant load loading_block')
 			else:
-				browser_block = loading_block[0].find_elements_by_xpath(".//div[@class='fbProfileBrowserList fbProfileBrowserListContainer']")
+				try:
+					browser_block = loading_block[0].find_elements_by_xpath(".//div[@class='fbProfileBrowserList fbProfileBrowserListContainer']")
+				except:
+					browser_block = loading_block.find_elements_by_xpath(".//div[@class='fbProfileBrowserList fbProfileBrowserListContainer']")
 				if not browser_block:
 					print('error: cant load browser_block!')
 				else:
@@ -380,6 +399,9 @@ if __name__ == '__main__':
 	Manager.Login()
 
 	#Manager.SearchPost(Club_Url)
+
+	Club_Url = 'https://www.facebook.com/groups/1603769146534321/?sorting_setting=CHRONOLOGICAL'
+	Club_MemberUrl = 'https://www.facebook.com/groups/huberstudents/members/'
 
 	Manager.SearchClubList(Club_MemberUrl)
 
