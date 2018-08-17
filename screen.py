@@ -2,6 +2,7 @@
 import sys
 import signal
 import threading
+from queue import Queue
 import tkinter as tk
 from tkinter import ttk  
 from tkinter.scrolledtext import ScrolledText
@@ -25,6 +26,7 @@ class RedirectText(object):
 
   def write(self, string):
     self.output.insert(tk.END, string)
+    self.output.see(tk.END)
 
   def flush(self):
     pass
@@ -44,6 +46,8 @@ class MainApplication():
     self.createInputs()
     self.createTextfield()
     self.createButtons()
+    self.master.lift()
+    self.master.attributes("-topmost", True)
 
     self.refresh()
 
@@ -101,13 +105,13 @@ class MainApplication():
 
 
   def createButtons(self):
-    self.button1 = ttk.Button(self.master,text="爬社團成員名單", command=self.crawlClubList)
+    self.button1 = ttk.Button(self.master,text="爬社團成員名單", command=self.crawlClubListThread)
     self.button1.grid(row=2, sticky='we', padx=5)
 
-    self.button2 = ttk.Button(self.master,text="爬Po文/回覆/按讚名單", command=self.crawlPost)
+    self.button2 = ttk.Button(self.master,text="爬Po文/回覆/按讚名單", command=self.crawlPostThread)
     self.button2.grid(row=3, sticky='we', padx=5)
 
-    self.button3 = ttk.Button(self.master,text="爬潛水名單", command=self.crawlAnalyze)
+    self.button3 = ttk.Button(self.master,text="爬潛水名單", command=self.crawlAnalyzeThread)
     self.button3.grid(row=4, sticky='we', padx=5, pady=(0,5))
 
 
@@ -137,19 +141,30 @@ class MainApplication():
       self.Manager.driver.quit()
 
 
+  def crawlClubListThread(self):
+    threading.Thread(target=self.crawlClubList).start()
+
   def crawlClubList(self):
     if not self.isLogin:
-      self.fbLogin()  
+      self.fbLogin()
 
     self.Manager.SearchClubList(Club_MemberUrl)
 
 
+  def crawlPostThread(self):
+    threading.Thread(target=self.crawlPost).start()
+
   def crawlPost(self):
     if not self.isLogin:
       print("登入中，請稍待...\n")
-      #threading.Thread(target=self.fbLogin).start()
+      # threading.Thread(target=self.fbLogin)start()
       self.fbLogin()
+
     self.Manager.SearchPost(Club_Url)
+
+
+  def crawlAnalyzeThread(self):
+    threading.Thread(target=self.crawlAnalyze).start()
 
   def crawlAnalyze(self):
 
@@ -167,6 +182,7 @@ class MainApplication():
       except:
         #print('缺少社團成員名單,開始爬社團成員')
         self.crawlClubList()
+
       try:
         tmpfile1fd = open('Comment.csv', 'r')
         tmpfile2fd = open('Likelist.csv', 'r')

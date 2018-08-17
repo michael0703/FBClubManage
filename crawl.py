@@ -358,7 +358,10 @@ class  ClubManage():
 							loading_flag = loading_block[0].find_element_by_xpath(".//span[@class='uiMorePagerLoader pam uiBoxLightblue']")
 							if preloading_flag != loading_flag:
 								break
+							else:
+								self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight)")
 							preloading_flag = loading_flag
+
 
 
 
